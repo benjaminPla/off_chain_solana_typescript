@@ -36,3 +36,7 @@ SEED_PHRASE=<your_seedphrase>
 The project is built to run on the `devnet` cluster, but you can manually change the `connection` to point to `testnet` or `mainnet-beta`.
 
 ## Images
+
+![image](https://github.com/user-attachments/assets/6c43a28b-4b45-4713-b541-1f22a7d94e97)
+
+![image](https://github.com/user-attachments/assets/490e5510-fade-4f80-8c4a-5d2ca3e90ec8)
