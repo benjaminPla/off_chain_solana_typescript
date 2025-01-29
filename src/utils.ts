@@ -6,6 +6,7 @@ export const getBalance = async (
   pubKey: web3.PublicKey,
   info: string = "Account",
 ): Promise<number> => {
+  console.log("[getBalance]: running...");
   try {
     const balance = await connection.getBalance(pubKey);
     const solBalance = balance / web3.LAMPORTS_PER_SOL;
@@ -13,6 +14,22 @@ export const getBalance = async (
     return solBalance;
   } catch (error) {
     throw new Error(`[getBalance]: ${error?.toString() ?? "unknown error"}`);
+  }
+};
+
+export const getAccountInfo = async (
+  connection: web3.Connection,
+  pubKey: web3.PublicKey,
+  info: string = "Account",
+): Promise<void> => {
+  console.log("[getAccountInfo]: running...");
+  try {
+    const accountInfo = await connection.getAccountInfo(pubKey);
+    const dataBuffer = accountInfo?.data;
+    const data = dataBuffer?.readUInt32LE(0);
+    console.log(`[${info} Data]: ${data}`);
+  } catch (error: unknown) {
+    throw new Error(`[getData]: ${error?.toString() ?? "unknown error"}`);
   }
 };
 

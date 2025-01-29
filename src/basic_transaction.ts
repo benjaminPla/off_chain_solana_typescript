@@ -3,7 +3,10 @@ import "dotenv/config";
 import { getKeypairFromEnvironment } from "@solana-developers/helpers";
 import { getBalance, requestLamportsIfNeeded } from "./utils";
 
-const basicTransaction = async () => {
+const basicTransaction = async (): Promise<void> => {
+  console.log("[BASIC TRANSACTION]");
+  console.log("\n");
+
   try {
     const senderKeypair = getKeypairFromEnvironment("SECRET_KEY");
     const senderPublickey = new web3.PublicKey(senderKeypair.publicKey);
@@ -38,14 +41,14 @@ const basicTransaction = async () => {
     );
 
     console.log("\n");
-    console.log("Transaction successful!");
+    console.log("[Transaction successful!]");
     console.log(`[Signature:] ${signature}`);
     console.log("\n");
 
     await getBalance(connection, senderPublickey, "Sender");
     await getBalance(connection, recipientPublickey, "Recipient");
   } catch (error: unknown) {
-    throw new Error(`basicTransaction: ${error?.toString() ?? "unknown"}`);
+    throw new Error(`[basicTransaction]: ${error?.toString() ?? "unknown"}`);
   }
 };
 
