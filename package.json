@@ -3,7 +3,9 @@
   "dependencies": {
     "@solana-developers/helpers": "^2.6.0",
     "@solana/web3.js": "^1.98.0",
-    "bip39": "^3.1.0"
+    "bip39": "^3.1.0",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1"
   },
   "devDependencies": {
     "@types/node": "^22.12.0",
