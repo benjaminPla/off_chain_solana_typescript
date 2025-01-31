@@ -2,6 +2,7 @@
   "author": "benjaminpla.dev@gmail.com",
   "dependencies": {
     "@solana-developers/helpers": "^2.6.0",
+    "@solana/spl-token": "^0.4.12",
     "@solana/web3.js": "^1.98.0",
     "bip39": "^3.1.0",
     "tweetnacl": "^1.0.3",
