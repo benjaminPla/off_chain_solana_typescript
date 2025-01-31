@@ -1,33 +1,28 @@
 import * as web3 from "@solana/web3.js";
 import "dotenv/config";
-import { getKeypairFromEnvironment } from "@solana-developers/helpers";
-import { getBalance, requestLamportsIfNeeded } from "./utils";
+import { getKeypairFromFile } from "@solana-developers/helpers";
+import { createConnection, logBalance, requestLamportsIfNeeded } from "./utils";
 
 const basicTransaction = async (): Promise<void> => {
-  console.log("[BASIC TRANSACTION]");
-  console.log("\n");
-
+  console.log("[Basic Transaction]: running...");
   try {
-    const senderKeypair = getKeypairFromEnvironment("SECRET_KEY");
-    const senderPublickey = new web3.PublicKey(senderKeypair.publicKey);
-
-    const recipientKeypair = web3.Keypair.generate();
-    const recipientPublickey = new web3.PublicKey(
-      recipientKeypair.publicKey.toBase58(),
+    const senderKeypair = await getKeypairFromFile("~/.config/solana/id.json");
+    const recipientKeypair = await getKeypairFromFile(
+      "~/.config/solana/keypair_2.json",
     );
 
-    const connection = new web3.Connection(web3.clusterApiUrl("devnet"));
+    const connection = createConnection();
 
-    await getBalance(connection, senderPublickey, "Sender");
-    await getBalance(connection, recipientPublickey, "Recipient");
+    await logBalance(connection, senderKeypair.publicKey, "Sender");
+    await logBalance(connection, recipientKeypair.publicKey, "Recipient");
 
     const transaction = new web3.Transaction();
 
-    await requestLamportsIfNeeded(connection, senderPublickey);
+    await requestLamportsIfNeeded(connection, senderKeypair.publicKey);
 
     const sendSolInstruction = web3.SystemProgram.transfer({
-      fromPubkey: senderPublickey,
-      toPubkey: recipientPublickey,
+      fromPubkey: senderKeypair.publicKey,
+      toPubkey: recipientKeypair.publicKey,
       lamports: web3.LAMPORTS_PER_SOL * 0.1,
     });
 
@@ -40,13 +35,10 @@ const basicTransaction = async (): Promise<void> => {
       [senderKeypair],
     );
 
-    console.log("\n");
     console.log("[Transaction successful!]");
     console.log(`[Signature:] ${signature}`);
-    console.log("\n");
-
-    await getBalance(connection, senderPublickey, "Sender");
-    await getBalance(connection, recipientPublickey, "Recipient");
+    await logBalance(connection, senderKeypair.publicKey, "Sender");
+    await logBalance(connection, recipientKeypair.publicKey, "Recipient");
   } catch (error: unknown) {
     throw new Error(`[basicTransaction]: ${error?.toString() ?? "unknown"}`);
   }

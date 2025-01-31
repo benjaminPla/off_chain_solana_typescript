@@ -1,38 +1,44 @@
 import * as web3 from "@solana/web3.js";
 import { decodeUTF8 } from "tweetnacl-util";
 import "dotenv/config";
-import { getKeypairFromEnvironment } from "@solana-developers/helpers";
+import { getKeypairFromFile } from "@solana-developers/helpers";
 import nacl from "tweetnacl";
 
-console.log("[SIGN AND VERIFY MESSAGE]");
-console.log("\n");
+const signAndVerifyMessage = async () => {
+  console.log("[Sign and Verify Message]: running...");
+  try {
+    const signerKeypair = await getKeypairFromFile("~/.config/solana/id.json");
 
-const signerKeypair = getKeypairFromEnvironment("SECRET_KEY");
-const signerSecretKey = signerKeypair.secretKey;
-const signerPublicKey = new web3.PublicKey(signerKeypair.publicKey);
+    const message = "The quick brown fox jumps over the lazy dog";
+    const messageBytes = decodeUTF8(message);
+    console.log(`[Message to be signed]: "${message}"`);
 
-const message = "The quick brown fox jumps over the lazy dog";
-const messageBytes = decodeUTF8(message);
-console.log(`[Message to be signed]: "${message}"`);
+    const signature = nacl.sign.detached(messageBytes, signerKeypair.secretKey);
+    console.log(`[sign message with signer secret key]: done`);
 
-const signature = nacl.sign.detached(messageBytes, signerSecretKey);
-console.log(`[sign message with signerSecretKey]: done`);
+    const randomKeypair = await getKeypairFromFile(
+      "~/.config/solana/keypair_2.json",
+    );
+    const verifyWithRandomPublicKey = nacl.sign.detached.verify(
+      messageBytes,
+      signature,
+      randomKeypair.publicKey.toBytes(),
+    );
+    console.log(
+      `[verify message with randomPublickKey]: ${verifyWithRandomPublicKey}`,
+    );
 
-const randomKeypair = web3.Keypair.generate();
-const verifyWithRandomPublicKey = nacl.sign.detached.verify(
-  messageBytes,
-  signature,
-  new web3.PublicKey(randomKeypair.publicKey).toBytes(),
-);
-console.log(
-  `[verify message with randomPublickKey]: ${verifyWithRandomPublicKey}`,
-);
+    const verifyWithSignerPublicKey = nacl.sign.detached.verify(
+      messageBytes,
+      signature,
+      signerKeypair.publicKey.toBytes(),
+    );
+    console.log(
+      `[verify message with signerPublicKey]: ${verifyWithSignerPublicKey}`,
+    );
+  } catch (error: unknown) {
+    throw new Error(`[basicTransaction]: ${error?.toString() ?? "unknown"}`);
+  }
+};
 
-const verifyWithSignerPublicKey = nacl.sign.detached.verify(
-  messageBytes,
-  signature,
-  signerPublicKey.toBytes(),
-);
-console.log(
-  `[verify message with signerPublicKey]: ${verifyWithSignerPublicKey}`,
-);
+signAndVerifyMessage();

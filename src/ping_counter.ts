@@ -1,29 +1,29 @@
 import * as web3 from "@solana/web3.js";
 import "dotenv/config";
-import { getKeypairFromEnvironment } from "@solana-developers/helpers";
-import { getBalance, getAccountInfo, requestLamportsIfNeeded } from "./utils";
+import { getKeypairFromFile } from "@solana-developers/helpers";
+import {
+  createConnection,
+  logAccountInfo,
+  logBalance,
+  requestLamportsIfNeeded,
+} from "./utils";
 
 const pingCounter = async (): Promise<void> => {
-  console.log("[PING COUNTER PROGRAM]");
-  console.log("\n");
-
+  console.log("[Ping Counter Program]: running...");
   try {
-    const payerKeyPair = getKeypairFromEnvironment("SECRET_KEY");
-    const payerPubKey = new web3.PublicKey(payerKeyPair.publicKey.toBase58());
-
-    const connection = new web3.Connection(web3.clusterApiUrl("devnet"));
-
-    await requestLamportsIfNeeded(connection, payerPubKey);
-
+    const payerKeyPair = await getKeypairFromFile("~/.config/solana/id.json");
     const PING_PROGRAM_ADDRESS = "ChT1B39WKLS8qUrkLvFDXMhEJ4F1XZzwUNHUt4AU9aVa";
     const programPublicKey = new web3.PublicKey(PING_PROGRAM_ADDRESS);
-
     const PING_PROGRAM_DATA_ADDRESS =
       "Ah9K7dQ8EHaZqcAsgBW8w37yN2eAy3koFmUn4x3CJtod";
     const programDataPublicKey = new web3.PublicKey(PING_PROGRAM_DATA_ADDRESS);
 
-    await getBalance(connection, payerPubKey, "Payer");
-    await getAccountInfo(connection, programDataPublicKey, "Program");
+    const connection = createConnection(web3.clusterApiUrl("devnet"));
+
+    await requestLamportsIfNeeded(connection, payerKeyPair.publicKey);
+
+    await logBalance(connection, payerKeyPair.publicKey, "Payer");
+    await logAccountInfo(connection, programDataPublicKey, "Program");
 
     const transaction = new web3.Transaction();
 
@@ -47,13 +47,10 @@ const pingCounter = async (): Promise<void> => {
       [payerKeyPair],
     );
 
-    console.log("\n");
     console.log("[Transaction successful!]");
     console.log(`[Signature:] ${signature}`);
-    console.log("\n");
-
-    await getBalance(connection, payerPubKey, "Payer");
-    await getAccountInfo(connection, programDataPublicKey, "Program");
+    await logBalance(connection, payerKeyPair.publicKey, "Payer");
+    await logAccountInfo(connection, programDataPublicKey, "Program");
   } catch (error: unknown) {
     throw new Error(`[pingCounter]: ${error?.toString() ?? "unknown"}`);
   }
