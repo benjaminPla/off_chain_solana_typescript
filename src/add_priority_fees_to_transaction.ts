@@ -36,7 +36,14 @@ const addPriorityFeesToTransaction = async () => {
       units,
     });
 
-    const microLamports = 1;
+    console.log("[getRecentPrioritizationFees]: running...");
+    let microLamports = 1;
+    const recentFees = await connection.getRecentPrioritizationFees();
+    if (recentFees && recentFees.length > 0) {
+      microLamports =
+        recentFees[Math.floor(recentFees.length / 2)].prioritizationFee;
+    }
+
     console.log(`[addPriorityFee]: ${microLamports} microLamports`);
     const addPriorityFee = web3.ComputeBudgetProgram.setComputeUnitPrice({
       microLamports,
