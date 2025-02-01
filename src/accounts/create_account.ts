@@ -25,9 +25,7 @@ const createAccount = async () => {
     const space = 0;
     const rentExemptionAmount =
       await connection.getMinimumBalanceForRentExemption(space);
-    console.log(
-      `[createAccountInstructions]: rentExemptionAmount is ${rentExemptionAmount}`,
-    );
+    console.log(`[getMinimumBalanceForRentExemption]: ${rentExemptionAmount} lamports`);
     const createAccountInstructions = web3.SystemProgram.createAccount({
       fromPubkey: payerKeyPair.publicKey,
       newAccountPubkey: newAccountKeyPair.publicKey,
