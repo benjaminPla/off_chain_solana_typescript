@@ -14,7 +14,11 @@ import {
 } from "@solana/spl-token";
 import "dotenv/config";
 import { getKeypairFromFile } from "@solana-developers/helpers";
-import { createConnection, requestLamportsIfNeeded } from "../utils";
+import {
+  createConnection,
+  handleError,
+  requestLamportsIfNeeded,
+} from "../utils";
 
 const spl1 = async () => {
   console.log("[spl_1]: running...");
@@ -107,7 +111,7 @@ const spl1 = async () => {
     );
     console.log(`[mintTo] created ${mintAmount} spl`);
   } catch (error: unknown) {
-    throw new Error(`[basicTransaction]: ${error?.toString() ?? "unknown"}`);
+    handleError(error, true);
   }
 };
 

@@ -1,18 +1,16 @@
 // 1. Creates a new mint
-// 2. Gets or creates associated token accounts for owner and recipient
-// 3. Mints a fixed amount of tokens to the owner's token account
-// 4. Removes mint `authority`
-// 5. Transfers a portion of tokens to the recipient's token account
-// 6. Fails trying to mint tokens
+// 2. Gets or creates associated token accounts for owner, recipient1 and recipient2
+// 3. Mints a fixed amount of tokens as the owner to the owner's token account
+// 4. Mints a fixed amount of tokens not as the owner to the owner's token account
+// 5. Fails trying to mint tokens
+// 6. Mints a fixed amount of tokens not as the owner to not the owner's token account
+// 7. Fails trying to mint tokens
 
 import * as web3 from "@solana/web3.js";
 import {
-  AuthorityType,
   createMint,
-  createTransferInstruction,
   getOrCreateAssociatedTokenAccount,
   mintTo,
-  setAuthority,
 } from "@solana/spl-token";
 import "dotenv/config";
 import { getKeypairFromFile } from "@solana-developers/helpers";
@@ -22,11 +20,11 @@ import {
   requestLamportsIfNeeded,
 } from "../utils";
 
-const spl2 = async () => {
-  console.log("[spl_2]: running...");
+const spl4 = async () => {
+  console.log("[spl_4]: running...");
   try {
     const ownerKeypair = await getKeypairFromFile("~/.config/solana/id.json");
-    const recipientKeypair = await getKeypairFromFile(
+    const notOwnerKeypair = await getKeypairFromFile(
       "~/.config/solana/keypair_2.json",
     );
 
@@ -44,7 +42,7 @@ const spl2 = async () => {
       connection,
       ownerKeypair,
       ownerKeypair.publicKey,
-      null,
+      ownerKeypair.publicKey,
       9,
     );
     console.log(`[mint]: ${mint}`);
@@ -57,14 +55,14 @@ const spl2 = async () => {
     );
     console.log(`[ownerTokenAccount.address]: ${ownerTokenAccount.address}`);
 
-    const recipientTokenAccount = await getOrCreateAssociatedTokenAccount(
+    const notOwnerTokenAccount = await getOrCreateAssociatedTokenAccount(
       connection,
       ownerKeypair,
       mint,
-      recipientKeypair.publicKey,
+      notOwnerKeypair.publicKey,
     );
     console.log(
-      `[recipientTokenAccount.address]: ${recipientTokenAccount.address}`,
+      `[notOwnerTokenAccount.address]: ${notOwnerTokenAccount.address}`,
     );
 
     const mintAmount = 10;
@@ -78,52 +76,42 @@ const spl2 = async () => {
       mintAmount * web3.LAMPORTS_PER_SOL,
       [],
     );
-    console.log(`[mintTo] created ${mintAmount} spl`);
-
-    console.log("[setAuthority] running...");
-    await setAuthority(
-      connection,
-      ownerKeypair,
-      mint,
-      ownerKeypair.publicKey,
-      AuthorityType.MintTokens,
-      null,
+    console.log(
+      `[mintTo]:\n\tamount: ${mintAmount}\n\tsigner: ${ownerKeypair.publicKey}\n\tto: ${ownerTokenAccount.address}`,
     );
-    console.log("[setAuthority] authority permanently disabled");
-
-    const transactionAmount = 1;
-    const transaction = new web3.Transaction().add(
-      createTransferInstruction(
-        ownerTokenAccount.address,
-        recipientTokenAccount.address,
-        ownerKeypair.publicKey,
-        transactionAmount * web3.LAMPORTS_PER_SOL,
-        [],
-      ),
-    );
-    console.log(`[createTransferInstruction] amount: ${transactionAmount} spl`);
-
-    console.log("[sendAndConfirmTransaction] running...");
-    const signature = await web3.sendAndConfirmTransaction(
-      connection,
-      transaction,
-      [ownerKeypair],
-    );
-
-    console.log("[Transaction successful!]");
-    console.log(`[Signature:] ${signature}`);
 
     try {
       console.log("[mintTo] running...");
       await mintTo(
         connection,
-        ownerKeypair,
+        notOwnerKeypair,
         mint,
         ownerTokenAccount.address,
         ownerKeypair.publicKey,
         mintAmount * web3.LAMPORTS_PER_SOL,
+        [],
       );
-      console.log(`[mintTo] created ${mintAmount} spl`);
+      console.log(
+        `[mintTo]:\n\tamount: ${mintAmount}\n\tsigner: ${notOwnerKeypair.publicKey}\n\tto: ${ownerTokenAccount.address}`,
+      );
+    } catch (error: unknown) {
+      handleError(error);
+    }
+
+    try {
+      console.log("[mintTo] running...");
+      await mintTo(
+        connection,
+        notOwnerKeypair,
+        mint,
+        notOwnerTokenAccount.address,
+        ownerKeypair.publicKey,
+        mintAmount * web3.LAMPORTS_PER_SOL,
+        [],
+      );
+      console.log(
+        `[mintTo]:\n\tamount: ${mintAmount}\n\tsigner: ${notOwnerKeypair.publicKey}\n\tto: ${notOwnerTokenAccount.address}`,
+      );
     } catch (error: unknown) {
       handleError(error);
     }
@@ -132,4 +120,4 @@ const spl2 = async () => {
   }
 };
 
-spl2();
+spl4();

@@ -16,6 +16,19 @@ export const createConnection = (environment?: string) => {
   return connection;
 };
 
+export const handleError = (error: unknown, shouldThrow: boolean = false) => {
+  let message: string;
+  if (error instanceof Error) {
+    message = `[handleError]: ${error.message}`;
+  } else {
+    message = "[handleError]: An unknown error occurred";
+  }
+  console.error(message);
+  if (shouldThrow) {
+    throw new Error(message);
+  }
+};
+
 export const logBalance = async (
   connection: web3.Connection,
   pubKey: web3.PublicKey,

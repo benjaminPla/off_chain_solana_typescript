@@ -19,10 +19,14 @@ import {
 } from "@solana/spl-token";
 import "dotenv/config";
 import { getKeypairFromFile } from "@solana-developers/helpers";
-import { createConnection, requestLamportsIfNeeded } from "../utils";
+import {
+  createConnection,
+  handleError,
+  requestLamportsIfNeeded,
+} from "../utils";
 
 const spl3 = async () => {
-  console.log("[spl_1]: running...");
+  console.log("[spl_3]: running...");
   try {
     const ownerKeypair = await getKeypairFromFile("~/.config/solana/id.json");
     const recipientKeypair1 = await getKeypairFromFile(
@@ -147,9 +151,7 @@ const spl3 = async () => {
       console.log("[Transaction successful!]");
       console.log(`[Signature:] ${signature2}`);
     } catch (error: unknown) {
-      console.error(
-        "Error while transfering: recipient1TokenAccount is freezed",
-      );
+      handleError(error);
     }
 
     const transaction3 = new web3.Transaction().add(
@@ -202,7 +204,7 @@ const spl3 = async () => {
     console.log("[Transaction successful!]");
     console.log(`[Signature:] ${signature4}`);
   } catch (error: unknown) {
-    throw new Error(`[basicTransaction]: ${error?.toString() ?? "unknown"}`);
+    handleError(error, true);
   }
 };
 

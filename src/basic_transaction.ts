@@ -1,7 +1,12 @@
 import * as web3 from "@solana/web3.js";
 import "dotenv/config";
 import { getKeypairFromFile } from "@solana-developers/helpers";
-import { createConnection, logBalance, requestLamportsIfNeeded } from "./utils";
+import {
+  createConnection,
+  handleError,
+  logBalance,
+  requestLamportsIfNeeded,
+} from "./utils";
 
 const basicTransaction = async (): Promise<void> => {
   console.log("[Basic Transaction]: running...");
@@ -40,7 +45,7 @@ const basicTransaction = async (): Promise<void> => {
     await logBalance(connection, senderKeypair.publicKey, "Sender");
     await logBalance(connection, recipientKeypair.publicKey, "Recipient");
   } catch (error: unknown) {
-    throw new Error(`[basicTransaction]: ${error?.toString() ?? "unknown"}`);
+    handleError(error, true);
   }
 };
 

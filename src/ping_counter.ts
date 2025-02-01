@@ -3,6 +3,7 @@ import "dotenv/config";
 import { getKeypairFromFile } from "@solana-developers/helpers";
 import {
   createConnection,
+  handleError,
   logAccountInfo,
   logBalance,
   requestLamportsIfNeeded,
@@ -52,7 +53,7 @@ const pingCounter = async (): Promise<void> => {
     await logBalance(connection, payerKeyPair.publicKey, "Payer");
     await logAccountInfo(connection, programDataPublicKey, "Program");
   } catch (error: unknown) {
-    throw new Error(`[pingCounter]: ${error?.toString() ?? "unknown"}`);
+    handleError(error, true);
   }
 };
 

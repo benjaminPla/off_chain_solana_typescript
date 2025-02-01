@@ -1,7 +1,7 @@
-import * as web3 from "@solana/web3.js";
 import { decodeUTF8 } from "tweetnacl-util";
 import "dotenv/config";
 import { getKeypairFromFile } from "@solana-developers/helpers";
+import { handleError } from "./utils";
 import nacl from "tweetnacl";
 
 const signAndVerifyMessage = async () => {
@@ -37,7 +37,7 @@ const signAndVerifyMessage = async () => {
       `[verify message with signerPublicKey]: ${verifyWithSignerPublicKey}`,
     );
   } catch (error: unknown) {
-    throw new Error(`[basicTransaction]: ${error?.toString() ?? "unknown"}`);
+    handleError(error, true);
   }
 };
 
