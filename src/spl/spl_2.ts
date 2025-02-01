@@ -2,9 +2,8 @@
 // 2. Gets or creates associated token accounts for owner and recipient
 // 3. Mints a fixed amount of tokens to the owner's token account
 // 4. Removes mint `authority`
-// 4. Transfers a portion of tokens to the recipient's token account
-// The owner retains control over the remaining tokens
-// The mint authority do not exists, so no one can mint more in the future
+// 5. Transfers a portion of tokens to the recipient's token account
+// 6. Fails trying to mint tokens
 
 import * as web3 from "@solana/web3.js";
 import {
