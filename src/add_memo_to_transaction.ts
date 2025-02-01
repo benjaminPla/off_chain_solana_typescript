@@ -1,15 +1,14 @@
 import * as web3 from "@solana/web3.js";
-import "dotenv/config";
-import { getKeypairFromFile } from "@solana-developers/helpers";
 import {
   createConnection,
   handleError,
   logBalance,
   requestLamportsIfNeeded,
 } from "./utils";
+import { getKeypairFromFile } from "@solana-developers/helpers";
 
-const basicTransaction = async (): Promise<void> => {
-  console.log("[Basic Transaction]: running...");
+const addMemoToTransaction = async () => {
+  console.log("[Add Memo to Transaction]: running...");
   try {
     const senderKeypair = await getKeypairFromFile("~/.config/solana/id.json");
     const recipientKeypair = await getKeypairFromFile(
@@ -31,9 +30,23 @@ const basicTransaction = async (): Promise<void> => {
       lamports: web3.LAMPORTS_PER_SOL * 0.1,
     });
 
-    transaction.add(instructions);
+    const memoMessage = "memoMessage";
+    const memoInstructions = new web3.TransactionInstruction({
+      keys: [
+        { pubkey: senderKeypair.publicKey, isSigner: true, isWritable: true },
+      ],
+      data: Buffer.from(memoMessage, "utf-8"),
+      programId: new web3.PublicKey(
+        "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
+      ),
+    });
+    console.log(
+      `[memoInstructions]: added message "${memoMessage}" to the transaction`,
+    );
 
-    console.log("[sendAndConfirmTransaction] running...");
+    transaction.add(instructions);
+    transaction.add(memoInstructions);
+
     const signature = await web3.sendAndConfirmTransaction(
       connection,
       transaction,
@@ -49,4 +62,4 @@ const basicTransaction = async (): Promise<void> => {
   }
 };
 
-basicTransaction();
+addMemoToTransaction();
