@@ -4,7 +4,7 @@ import {
   handleError,
   logBalance,
   requestLamportsIfNeeded,
-} from "./utils";
+} from "../utils";
 import { getKeypairFromFile } from "@solana-developers/helpers";
 
 const createAccount = async () => {

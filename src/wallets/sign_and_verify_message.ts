@@ -1,7 +1,7 @@
 import { decodeUTF8 } from "tweetnacl-util";
 import "dotenv/config";
 import { getKeypairFromFile } from "@solana-developers/helpers";
-import { handleError } from "./utils";
+import { handleError } from "../utils";
 import nacl from "tweetnacl";
 
 const signAndVerifyMessage = async () => {

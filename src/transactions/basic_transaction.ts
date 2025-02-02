@@ -6,7 +6,7 @@ import {
   handleError,
   logBalance,
   requestLamportsIfNeeded,
-} from "./utils";
+} from "../utils";
 
 const basicTransaction = async (): Promise<void> => {
   console.log("[Basic Transaction]: running...");

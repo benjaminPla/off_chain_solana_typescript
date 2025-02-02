@@ -5,7 +5,7 @@ import {
   handleError,
   logBalance,
   requestLamportsIfNeeded,
-} from "./utils";
+} from "../utils";
 
 const addPriorityFeesToTransaction = async () => {
   console.log("[addPriorityFee]: running...");
