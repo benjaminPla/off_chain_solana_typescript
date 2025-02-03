@@ -3,6 +3,7 @@
 ## Overview
 
 This is an off-chain development project built in Node.js + TypeScript that uses `@solana/web3.js` and `@solana-developers/helpers` dependencies. It goes through all the basic actions with the Solana blockchain.
+This project is linked to the [on_chain_solana_rust](https://github.com/benjaminPla/on_chain_solana_rust) repository, which provides the on-chain interactions required (smart contracts).
 
 ## Structure
 
