@@ -16,6 +16,26 @@ export const createConnection = (environment?: string) => {
   return connection;
 };
 
+export const createPDA = (
+  payerPublicKey: web3.PublicKey,
+  programPublicKey: web3.PublicKey,
+): [web3.PublicKey, number] => {
+  console.log("[createPDA]: running...");
+  const [pda, bump] = web3.PublicKey.findProgramAddressSync(
+    [
+      Buffer.from("seed"),
+      payerPublicKey.toBuffer(),
+      programPublicKey.toBuffer(),
+    ],
+    programPublicKey,
+  );
+
+  console.log(`pda: ${pda}`);
+  console.log(`bump: ${bump}`);
+
+  return [pda, bump];
+};
+
 export const handleError = (error: unknown, shouldThrow: boolean = false) => {
   let message: string;
   if (error instanceof Error) {
