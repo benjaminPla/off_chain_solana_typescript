@@ -54,3 +54,6 @@ The project is built to run on any cluster, but I highly recommend to run it loc
 ![image](https://github.com/user-attachments/assets/1e84b01b-095f-4f3a-8940-7c21912ebf8b)
 
 ![image](https://github.com/user-attachments/assets/4911bb5d-5626-4fa9-96fc-0c36831b0eee)
+
+![image](https://github.com/user-attachments/assets/87aadf38-8e73-4105-8050-2f6487d16d7f)
+
